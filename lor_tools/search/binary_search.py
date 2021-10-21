@@ -9,11 +9,9 @@ class BinarySearch:
 
         :param array: the array to be searched
         :param target: the target to look for
-        :param lo:
-        :param hi:
         :param b_return_pos: if the target is not found in the array and b_return_pos == True, then the returned value
         will represent the position the target would take if it were inserted into the array (more concretely, it will
-        return -(insert_pos)), else it will simply return -1
+        return -(insert_pos+1)), else it will simply return -1
         :return:
         """
         lo = 0
@@ -27,7 +25,8 @@ class BinarySearch:
             elif target > val:
                 if lo == x:  # The current value of lo represents the position of the element
                              # 'target' would be inserted after
-                    x = -(x+1)
+                    x = -(x+2)  # We return the "insert position" of the target '+1'!
+                                # The insert position is the current position +1, hence, we do +2!
                     break
                 lo = x
             elif target < val:
