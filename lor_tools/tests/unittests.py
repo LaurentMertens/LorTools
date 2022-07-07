@@ -14,6 +14,31 @@ class TestBinarySearch(unittest.TestCase):
         self.assertEqual(-1, bs.find(a, 10, b_return_pos=False))
         self.assertEqual(2, bs.find(a, 4))
 
+    def test_binary_search_array(self):
+        a = b'123654789'
+        end_pos = [3, 6, 9]
+        # Using end positions
+        self.assertEqual(0, bs.find_in_array(a, b'123', end_pos))
+        self.assertEqual(1, bs.find_in_array(a, b'654', end_pos))
+        self.assertEqual(2, bs.find_in_array(a, b'789', end_pos))
+        self.assertEqual(-1, bs.find_in_array(a, b'ha', end_pos, b_return_pos=False))
+        self.assertEqual(-4, bs.find_in_array(a, b'ha', end_pos, b_return_pos=True))
+
+        # Using fixed size; mess up end_pos to make sure it is being ignored
+        end_pos = [-1, 'haha', 2876, 37]
+        self.assertEqual(0, bs.find_in_array(a, b'123', end_pos, fixed_size=3))
+        self.assertEqual(1, bs.find_in_array(a, b'654', end_pos, fixed_size=3))
+        self.assertEqual(2, bs.find_in_array(a, b'789', end_pos, fixed_size=3))
+        self.assertEqual(-1, bs.find_in_array(a, b'ha', end_pos, fixed_size=3, b_return_pos=False))
+        self.assertEqual(-4, bs.find_in_array(a, b'ha', end_pos, fixed_size=3, b_return_pos=True))
+
+        # Automatic assumption of fixed size = 1
+        self.assertEqual(1, bs.find_in_array(a, b'2'))
+        self.assertEqual(6, bs.find_in_array(a, b'7'))
+        self.assertEqual(-1, bs.find_in_array(a, b'0'))
+        self.assertEqual(-10, bs.find_in_array(a, b'a'))
+
+
 
 class TestSortTogether(unittest.TestCase):
     def test_sort_together(self):

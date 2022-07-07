@@ -1,6 +1,5 @@
 # Adapted from https://stackoverflow.com/questions/9501337/binary-search-algorithm-in-python
 # Also: https://stackoverflow.com/questions/212358/binary-search-bisection-in-python
-import os.path
 
 
 class BinarySearch:
@@ -21,6 +20,71 @@ class BinarySearch:
         while True:
             x = lo + (hi - lo)//2
             val = array[x]
+            if target == val:
+                return x
+            elif target > val:
+                if lo == x:  # The current value of lo represents the position of the element
+                             # 'target' would be inserted after
+                    x = -(x+2)  # We return the "insert position" of the target '+1'!
+                                # The insert position is the current position +1, hence, we do +2!
+                    break
+                lo = x
+            elif target < val:
+                if lo == hi == 0:
+                    x = -(x+1)
+                    break
+                hi = x
+
+        return x if x >= 0 else (x if b_return_pos else -1)
+
+    @staticmethod
+    def find_in_array(array, target, endpos_entries=None, fixed_size=None, b_return_pos=True):
+        """
+        Same principle as "find", only this method assumes the input is a contiguous array. 'endpos_entries' is expected\
+        to be a iterable of size (number of elements in array), where each entry contains to the end position in the\
+        array of the corresponding element.
+
+        :param array: the array to be searched.
+        :param target: the target to look for.
+        :param endpos_entries: list containing the end index of the entries in the array; if None, it is assumed\
+        that each position in the array contains a single entry.
+        :param fixed_size: if all entries in the array have the same size, you can specify this using this parameter.\
+        If its value is an integer, endpos_entries will be ignored.
+        :param b_return_pos: if the target is not found in the array and b_return_pos == True, then the returned value\
+        will represent the position the target would take if it were inserted into the array (more concretely, it will\
+        return -(insert_pos+1)), else it will simply return -1.
+        :return:
+        """
+        if endpos_entries is None and fixed_size is None:
+            b_fixed_size = True
+            fixed_size = 1
+        # If both endpos_entries AND fixed_size are specified, ignore endpos_entries
+        elif fixed_size is not None:
+            b_fixed_size = True
+        else:
+            b_fixed_size = False
+
+        lo = 0
+        hi = len(array)//fixed_size if b_fixed_size else len(endpos_entries)
+
+        while True:
+            x = lo + (hi - lo)//2
+
+            # x represents an index in endpos_entries; now get the corresponding starting position
+            if b_fixed_size:
+                end = (x+1)*fixed_size
+            else:
+                end = endpos_entries[x]
+            if b_fixed_size:
+                start = x*fixed_size
+            else:
+                if x == 0:
+                    start = 0
+                else:
+                    start = endpos_entries[x-1]
+
+            # Read entry 'x'
+            val = array[start:end]
             if target == val:
                 return x
             elif target > val:
@@ -92,9 +156,4 @@ class BinarySearch:
                         break
                     hi = x
 
-            return x if x >= 0 else (x if b_return_pos else -1)
-
-
-if __name__ == '__main__':
-    _file = os.path.join(os.sep, 'mnt', 'DataMorry', 'Work', 'Projects', 'SemWebChallenge', 'Data', 'tokens.bin')
-    print(BinarySearch.find_in_file(file=_file, target=b'Belgium', b_binary=True))
+        return x if x >= 0 else (x if b_return_pos else -1)
